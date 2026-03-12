@@ -1,0 +1,20 @@
+# Terraform files
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+key.json
+authorized_key.json
+*.auto.tfvars
+
+# Secrets
+**/key.json
+**/authorized_key.json
+
+# SSH keys
+*.pub
+id_rsa.pub
+
+# OS files
+.DS_Store
+Thumbs.db
