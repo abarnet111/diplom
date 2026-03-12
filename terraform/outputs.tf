@@ -45,3 +45,12 @@ output "web2_internal_ip" {
 output "web2_fqdn" {
   value = "${yandex_compute_instance.web2.hostname}.ru-central1.internal"
 }
+
+output "load_balancer_public_ip" {
+  value = yandex_alb_load_balancer.web-lb.listener[0].endpoint[0].address[0].external_ipv4_address
+  description = "Публичный IP адрес балансировщика для доступа к сайту"
+}
+
+output "target_group_ids" {
+  value = yandex_alb_target_group.web-servers.id
+}
