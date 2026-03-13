@@ -64,3 +64,17 @@ output "zabbix_internal_ip" {
   value = yandex_compute_instance.zabbix.network_interface.0.ip_address
   description = "Внутренний IP для подключения агентов"
 }
+
+output "elasticsearch_internal_ip" {
+  value = yandex_compute_instance.elasticsearch.network_interface.0.ip_address
+  description = "Внутренний IP Elasticsearch для подключения Filebeat"
+}
+
+output "elasticsearch_fqdn" {
+  value = "${yandex_compute_instance.elasticsearch.hostname}.ru-central1.internal"
+}
+
+output "kibana_public_ip" {
+  value = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
+  description = "Публичный IP для доступа к веб-интерфейсу Kibana"
+}
