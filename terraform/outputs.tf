@@ -54,3 +54,13 @@ output "load_balancer_public_ip" {
 output "target_group_ids" {
   value = yandex_alb_target_group.web-servers.id
 }
+
+output "zabbix_public_ip" {
+  value = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
+  description = "Публичный IP для доступа к веб-интерфейсу Zabbix"
+}
+
+output "zabbix_internal_ip" {
+  value = yandex_compute_instance.zabbix.network_interface.0.ip_address
+  description = "Внутренний IP для подключения агентов"
+}
