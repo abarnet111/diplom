@@ -3,6 +3,7 @@ resource "yandex_compute_instance" "bastion" {
   name        = "bastion"
   platform_id = "standard-v3"
   zone        = var.zones[0]
+  
 
   resources {
     cores  = 2
@@ -24,6 +25,10 @@ resource "yandex_compute_instance" "bastion" {
 
   metadata = {
     ssh-keys = "ubuntu:${file("id_rsa.pub")}"
+  }
+
+  scheduling_policy {
+    preemptible = true
   }
 
   allow_stopping_for_update = true

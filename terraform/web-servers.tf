@@ -27,6 +27,10 @@ resource "yandex_compute_instance" "web1" {
     ssh-keys = "ubuntu:${file("id_rsa.pub")}"
   }
 
+  scheduling_policy {
+    preemptible = true
+  }
+
   allow_stopping_for_update = true
 }
 
