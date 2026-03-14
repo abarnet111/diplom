@@ -1,0 +1,38 @@
+---
+- name: Install and configure nginx on web servers
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Create custom index.html
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Web Server {{ inventory_hostname }}</title>
+          </head>
+          <body>
+              <h1>Hello from {{ inventory_hostname }}</h1>
+              <p>Server IP: {{ ansible_default_ipv4.address }}</p>
+              <p>Zone: {{ 'ru-central1-a' if 'web1' in inventory_hostname else 'ru-central1-b' }}</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+    - name: Ensure nginx is running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes

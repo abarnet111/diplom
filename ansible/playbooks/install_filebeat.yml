@@ -1,0 +1,56 @@
+---
+- name: Install and configure Filebeat on web servers
+  hosts: webservers
+  become: yes
+  vars:
+    elasticsearch_host: "10.10.2.13"
+    kibana_host: "93.77.190.25"
+
+  tasks:
+    - name: Remove old Elastic repository if exists
+      file:
+        path: /etc/apt/sources.list.d/elastic-8.x.list
+        state: absent
+
+    - name: Add Yandex mirror repository
+      apt_repository:
+        repo: "deb [trusted=yes] https://mirror.yandex.ru/mirrors/elastic/8.x/apt stable main"
+        state: present
+        filename: elastic-8.x.list
+        update_cache: yes
+
+    - name: Install Filebeat
+      apt:
+        name: filebeat
+        state: present
+        update_cache: yes
+
+    - name: Configure Filebeat
+      template:
+        src: templates/filebeat.yml.j2
+        dest: /etc/filebeat/filebeat.yml
+        mode: '0644'
+      notify: restart filebeat
+
+    - name: Enable Nginx module
+      command: filebeat modules enable nginx
+      changed_when: false
+      register: nginx_module
+      failed_when: nginx_module.rc != 0 and "already enabled" not in nginx_module.stderr
+
+    - name: Load Kibana dashboards (this may take a moment)
+      command: filebeat setup -e
+      changed_when: false
+      ignore_errors: yes  # Не критично, если не загрузится
+
+    - name: Start and enable Filebeat
+      systemd:
+        name: filebeat
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart filebeat
+      systemd:
+        name: filebeat
+        state: restarted
